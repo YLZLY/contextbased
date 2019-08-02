@@ -25,7 +25,6 @@ def get_up(item_cate,input_file):
     record = {}
     up={}
     topk=2
-    total_score=0
     score_thr=4.0
     fp = open(input_file)
     for line in fp:
@@ -35,8 +34,6 @@ def get_up(item_cate,input_file):
         item = line.strip().split(",")
         if len(item)<4:
             continue
-        print(item)
-
         userid,itemid,rating,timestamp = item[0],item[1],float(item[2]),int(item[3])
         if rating < score_thr:
             continue
@@ -45,7 +42,7 @@ def get_up(item_cate,input_file):
         time_score = get_time_score(timestamp)
         if userid not in record:
             record[userid] = {}
-        for fix_cate in item_cate([itemid]):
+        for fix_cate in item_cate[itemid]:
             if fix_cate not in record[userid]:
                 record[userid][fix_cate]=0
             record[userid][fix_cate] +=rating*time_score*item_cate[itemid][fix_cate]
@@ -53,11 +50,12 @@ def get_up(item_cate,input_file):
     for userid in record:
         if userid not in up:
             up[userid]=[]
+        total_score =0
         for zuhe in sorted(record[userid].items(),key=operator.itemgetter(1),reverse=True)[:topk]:
-            up[userid].append(zuhe[0],zuhe[1])
+            up[userid].append((zuhe[0],zuhe[1]))
             total_score +=zuhe[1]
         for index in range(len(up[userid])) :
-            up[userid][index] =(up[userid][index][0],round(up[userid][1]/total_score,3))
+            up[userid][index] =(up[userid][index][0],round(up[userid][index][1]/total_score,3))
 def get_time_score(timestamp):
     """
     :param timestamp:输入时间戳
@@ -95,6 +93,6 @@ def run_main():
     ave_score=read.get_ave_score("../data/ratings15000.csv")
     item_cate,cate_item_sort=read.get_item_cate(ave_score,"../data/movies.csv")
     up = get_up(item_cate,"../data/ratings15000.csv")
-    print(up)
+    # print(recom(cate_item_sort,up,'1'))
 if __name__ == '__main__':
     run_main()
