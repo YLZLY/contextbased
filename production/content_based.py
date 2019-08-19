@@ -107,6 +107,6 @@ def run_main():
     ave_score=read.get_ave_score("../data/ratings15000.csv")
     item_cate,cate_item_sort=read.get_item_cate(ave_score,"../data/movies.csv")
     up = get_up(item_cate,"../data/ratings15000.csv")
-    print(recom(cate_item_sort,up,'1'))
+    print(recom(cate_item_sort,up,'2'))
 if __name__ == '__main__':
     run_main()
